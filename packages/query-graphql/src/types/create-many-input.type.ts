@@ -4,6 +4,7 @@ import { ValidateNested, ArrayNotEmpty } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';
 import { getDTONames } from '../common';
 import { getMetadataStorage } from '../metadata';
+import { CreateResolverOpts } from '../resolvers';
 
 export interface CreateManyInputType<DTO, C extends DeepPartial<DTO>> {
   input: C[];
@@ -12,6 +13,7 @@ export interface CreateManyInputType<DTO, C extends DeepPartial<DTO>> {
 export function CreateManyInputType<DTO, C extends DeepPartial<DTO>>(
   DTOClass: Class<DTO>,
   CreateClass: Class<C>,
+  opts?: CreateResolverOpts<DTO, C>,
 ): Class<CreateManyInputType<DTO, C>> {
   const metadataStorage = getMetadataStorage();
   const existing = metadataStorage.getCreateManyInputType<DTO, C>(DTOClass);
@@ -19,7 +21,7 @@ export function CreateManyInputType<DTO, C extends DeepPartial<DTO>>(
     return existing;
   }
 
-  const { pluralBaseNameLower, pluralBaseName } = getDTONames(DTOClass);
+  const { pluralBaseNameLower, pluralBaseName } = getDTONames(DTOClass, opts);
   @InputType(`CreateMany${pluralBaseName}Input`)
   class CreateManyInput implements CreateManyInputType<DTO, C> {
     @Type(() => CreateClass)

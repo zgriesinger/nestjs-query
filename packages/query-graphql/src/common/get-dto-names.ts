@@ -6,6 +6,7 @@ import { getMetadataStorage } from '../metadata';
 
 export interface DTONamesOpts {
   dtoName?: string;
+  federationPrefix?: string;
 }
 
 /** @internal */
@@ -18,9 +19,12 @@ export interface DTONames {
 
 /** @internal */
 export const getDTONames = <DTO>(DTOClass: Class<DTO>, opts?: DTONamesOpts): DTONames => {
-  const baseName = upperCaseFirst(
+  let baseName = upperCaseFirst(
     opts?.dtoName ?? getMetadataStorage().getGraphqlObjectMetadata(DTOClass)?.name ?? DTOClass.name,
   );
+  if (opts?.federationPrefix) {
+    baseName = `${opts.federationPrefix}${baseName}`;
+  }
   const pluralBaseName = plural(baseName);
   const baseNameLower = lowerCaseFirst(baseName);
   const pluralBaseNameLower = plural(baseNameLower);

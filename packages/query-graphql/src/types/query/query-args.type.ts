@@ -42,9 +42,13 @@ export interface QueryArgsTypeOpts<T> {
 
 const defaultQueryOpts = { defaultResultSize: 10, maxResultsSize: 50, defaultSort: [], defaultFilter: {} };
 
-export function QueryArgsType<T>(TClass: Class<T>, opts: QueryArgsTypeOpts<T> = defaultQueryOpts): StaticQueryType<T> {
-  const F = FilterType(TClass);
-  const S = SortType(TClass);
+export function QueryArgsType<T>(
+  TClass: Class<T>,
+  opts: QueryArgsTypeOpts<T> = defaultQueryOpts,
+  prefix?: string,
+): StaticQueryType<T> {
+  const F = FilterType(TClass, prefix);
+  const S = SortType(TClass, prefix);
   const P = CursorPagingType();
 
   @ArgsType()

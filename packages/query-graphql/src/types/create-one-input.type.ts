@@ -4,6 +4,7 @@ import { ValidateNested } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';
 import { getDTONames } from '../common';
 import { getMetadataStorage } from '../metadata';
+import { CreateResolverOpts } from '../resolvers';
 
 export interface CreateOneInputType<DTO, C extends DeepPartial<DTO>> {
   input: C;
@@ -12,6 +13,7 @@ export interface CreateOneInputType<DTO, C extends DeepPartial<DTO>> {
 export function CreateOneInputType<DTO, C extends DeepPartial<DTO>>(
   DTOClass: Class<DTO>,
   CreateClass: Class<C>,
+  opts?: CreateResolverOpts<DTO, C>,
 ): Class<CreateOneInputType<DTO, C>> {
   const metadataStorage = getMetadataStorage();
   const existing = metadataStorage.getCreateOneInputType<DTO, C>(DTOClass);
@@ -19,7 +21,7 @@ export function CreateOneInputType<DTO, C extends DeepPartial<DTO>>(
     return existing;
   }
 
-  const { baseNameLower, baseName } = getDTONames(DTOClass);
+  const { baseNameLower, baseName } = getDTONames(DTOClass, opts);
   @InputType(`CreateOne${baseName}Input`)
   class CreateOneInput implements CreateOneInputType<DTO, C> {
     @Type(() => CreateClass)

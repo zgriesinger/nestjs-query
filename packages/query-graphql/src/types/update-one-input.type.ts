@@ -4,6 +4,7 @@ import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { getDTONames } from '../common';
 import { getMetadataStorage } from '../metadata';
+import { CreateResolverOpts } from '../resolvers';
 
 export interface UpdateOneInputType<DTO, U extends DeepPartial<DTO>> {
   id: string | number;
@@ -13,13 +14,14 @@ export interface UpdateOneInputType<DTO, U extends DeepPartial<DTO>> {
 export function UpdateOneInputType<DTO, U extends DeepPartial<DTO>>(
   DTOClass: Class<DTO>,
   UpdateType: Class<U>,
+  opts?: CreateResolverOpts<DTO>,
 ): Class<UpdateOneInputType<DTO, U>> {
   const metadataStorage = getMetadataStorage();
   const existing = metadataStorage.getUpdateOneInputType<DTO, U>(DTOClass);
   if (existing) {
     return existing;
   }
-  const { baseName } = getDTONames(DTOClass);
+  const { baseName } = getDTONames(DTOClass, opts);
   @InputType(`UpdateOne${baseName}Input`)
   class UpdateOneInput implements UpdateOneInputType<DTO, U> {
     @IsNotEmpty()

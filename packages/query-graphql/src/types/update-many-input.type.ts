@@ -5,6 +5,7 @@ import { Type } from 'class-transformer';
 import { getDTONames } from '../common';
 import { getMetadataStorage } from '../metadata';
 import { FilterType } from './query';
+import { CreateResolverOpts } from '../resolvers';
 
 export interface UpdateManyInputType<DTO, U extends DeepPartial<DTO>> {
   filter: Filter<DTO>;
@@ -14,14 +15,15 @@ export interface UpdateManyInputType<DTO, U extends DeepPartial<DTO>> {
 export function UpdateManyInputType<DTO, U extends DeepPartial<DTO>>(
   DTOClass: Class<DTO>,
   UpdateType: Class<U>,
+  opts?: CreateResolverOpts<DTO>,
 ): Class<UpdateManyInputType<DTO, U>> {
   const metadataStorage = getMetadataStorage();
   const existing = metadataStorage.getUpdateManyInputType<DTO, U>(DTOClass);
   if (existing) {
     return existing;
   }
-  const { pluralBaseName } = getDTONames(DTOClass);
-  const F = FilterType(DTOClass);
+  const { pluralBaseName } = getDTONames(DTOClass, opts);
+  const F = FilterType(DTOClass, opts?.federationPrefix);
 
   @InputType(`UpdateMany${pluralBaseName}Input`)
   class UpdateManyInput implements UpdateManyInputType<DTO, U> {

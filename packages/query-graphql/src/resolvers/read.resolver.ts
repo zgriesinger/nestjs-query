@@ -27,7 +27,10 @@ export const Readable = <DTO>(DTOClass: Class<DTO>, opts: ReadResolverOpts<DTO>)
 >(
   BaseClass: B,
 ): Class<ReadResolver<DTO>> & B => {
-  const { QueryArgs = QueryArgsType(DTOClass, opts), Connection = ConnectionType(DTOClass) } = opts;
+  const {
+    QueryArgs = QueryArgsType(DTOClass, opts, opts.federationPrefix),
+    Connection = ConnectionType(DTOClass),
+  } = opts;
   const { baseNameLower, pluralBaseNameLower } = getDTONames(DTOClass, opts);
 
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'QueryArgs', 'Connection');

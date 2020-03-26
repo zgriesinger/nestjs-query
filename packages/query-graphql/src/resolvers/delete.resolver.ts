@@ -40,7 +40,7 @@ export const Deletable = <DTO>(DTOClass: Class<DTO>, opts: DeleteResolverOpts<DT
   BaseClass: B,
 ): Class<DeleteResolver<DTO>> & B => {
   const { baseName, pluralBaseName } = getDTONames(DTOClass, opts);
-  const { DeleteOneInput = DeleteOneInputType(), DeleteManyInput = DeleteManyInputType(DTOClass) } = opts;
+  const { DeleteOneInput = DeleteOneInputType(), DeleteManyInput = DeleteManyInputType(DTOClass, opts) } = opts;
   const DMR = DeleteManyResponseType();
 
   const commonResolverOpts = omit(opts, 'dtoName', 'one', 'many', 'DeleteOneInput', 'DeleteManyInput');

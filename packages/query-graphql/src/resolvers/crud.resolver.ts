@@ -24,6 +24,7 @@ export interface CRUDResolverOpts<
   update?: UpdateResolverOpts<DTO, U>;
   delete?: DeleteResolverOpts<DTO>;
   relations?: RelationsOpts;
+  federationPrefix?: string;
 }
 
 export interface CRUDResolver<DTO, C extends DeepPartial<DTO>, U extends DeepPartial<DTO>>
@@ -64,16 +65,21 @@ export const CRUDResolver = <DTO, C extends DeepPartial<DTO>, U extends DeepPart
     read = {},
     update = {},
     delete: deleteArgs = {},
+    federationPrefix,
   } = opts;
   return Relatable(
     DTOClass,
     relations,
   )(
-    Creatable(DTOClass, { CreateDTOClass, ...create })(
-      Readable(
-        DTOClass,
-        read,
-      )(Updateable(DTOClass, { UpdateDTOClass, ...update })(DeleteResolver(DTOClass, deleteArgs))),
+    Creatable(DTOClass, { CreateDTOClass, ...create, federationPrefix })(
+      Readable(DTOClass, {
+        ...read,
+        federationPrefix,
+      })(
+        Updateable(DTOClass, { UpdateDTOClass, ...update, federationPrefix })(
+          DeleteResolver(DTOClass, { ...deleteArgs, federationPrefix }),
+        ),
+      ),
     ),
   );
 };

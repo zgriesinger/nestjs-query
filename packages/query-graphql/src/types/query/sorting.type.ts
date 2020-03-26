@@ -15,7 +15,7 @@ registerEnumType(SortNulls, {
   description: 'Sort Nulls Options', // this one is optional
 });
 
-export function SortType<T>(TClass: Class<T>): Class<SortField<T>> {
+export function SortType<T>(TClass: Class<T>, federationPrefix?: string): Class<SortField<T>> {
   const metadataStorage = getMetadataStorage();
   const existing = metadataStorage.getSortType<T>(TClass);
   if (existing) {
@@ -31,7 +31,12 @@ export function SortType<T>(TClass: Class<T>): Class<SortField<T>> {
       `No fields found to create SortType for ${TClass.name}. Ensure fields are annotated with @FilterableField`,
     );
   }
-  const prefix = objMetadata.name;
+  let prefix;
+  if (federationPrefix) {
+    prefix = `${federationPrefix}${objMetadata.name}`;
+  } else {
+    prefix = objMetadata.name;
+  }
   const fieldNames = fields.map(f => f.propertyName);
   const fieldNameMap = fieldNames.reduce((acc, f) => ({ ...acc, [f]: f }), {});
   registerEnumType(fieldNameMap, { name: `${prefix}SortFields` });

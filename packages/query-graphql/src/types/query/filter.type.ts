@@ -6,7 +6,7 @@ import { getMetadataStorage } from '../../metadata';
 import { createFilterComparisonType } from './field-comparison';
 import { UnregisteredObjectType } from '../type.errors';
 
-export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
+export function FilterType<T>(TClass: Class<T>, federationPrefix?: string): Class<Filter<T>> {
   const metadataStorage = getMetadataStorage();
   const existing = metadataStorage.getFilterType<T>(TClass);
   if (existing) {
@@ -16,7 +16,12 @@ export function FilterType<T>(TClass: Class<T>): Class<Filter<T>> {
   if (!objMetadata) {
     throw new UnregisteredObjectType(TClass, 'No fields found to create FilterType.');
   }
-  const prefix = objMetadata.name;
+  let prefix;
+  if (federationPrefix) {
+    prefix = `${federationPrefix}${objMetadata.name}`;
+  } else {
+    prefix = objMetadata.name;
+  }
   const fields = metadataStorage.getFilterableObjectFields(TClass);
   if (!fields) {
     throw new Error(`No fields found to create GraphQLFilter for ${TClass.name}`);

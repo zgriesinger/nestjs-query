@@ -54,8 +54,8 @@ export const Creatable = <DTO, C extends DeepPartial<DTO>>(DTOClass: Class<DTO>,
   const { baseName, pluralBaseName } = getDTONames(DTOClass, opts);
   const {
     CreateDTOClass = defaultCreateInput(DTOClass, baseName),
-    CreateOneInput = CreateOneInputType(DTOClass, CreateDTOClass),
-    CreateManyInput = CreateManyInputType(DTOClass, CreateDTOClass),
+    CreateOneInput = CreateOneInputType(DTOClass, CreateDTOClass, opts),
+    CreateManyInput = CreateManyInputType(DTOClass, CreateDTOClass, opts),
   } = opts;
 
   const commonResolverOpts = omit(
